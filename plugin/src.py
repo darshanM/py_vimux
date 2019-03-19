@@ -8,11 +8,13 @@ SEARCH_LAST_CMD = "search('{substr}', 'bc')"
 
 GET_LINE_CMD = "getline({line_num})"
 
-GET_FILE_PATH_CMD = "expand('%:p')"
+GET_FILE_PATH_CMD = "expand('%s')"
 
 RUN_TEST_CMD = "{test_runner}  {path}"
 
 TEST_RUNNER = vim.eval('g:test_runner')
+SETUP_CMD = vim.eval('g:setup_cmd')
+SETUP_TEST_RUNNER_CMD = vim.eval('g:setup_test_runner_cmd')
 
 
 def split_pane():
@@ -51,7 +53,11 @@ def run_focused_test():
         path=test_to_run
     )
 
-    _execute_cmd_in_pane(cmd, runner_pane_idx)
+    _execute_cmd_in_pane(
+        cmd,
+        runner_pane_idx,
+        SETUP_TEST_RUNNER_CMD
+    )
 
 
 def run_focused_class():
@@ -80,11 +86,14 @@ def run_focused_class():
         path=test_to_run
     )
 
-    _execute_cmd_in_pane(cmd, runner_pane_idx)
+    _execute_cmd_in_pane(
+        cmd,
+        runner_pane_idx,
+        SETUP_TEST_RUNNER_CMD
+    )
 
 
 def run_all_tests_in_file():
-
     runner_pane_idx = _get_idx_of_runner_pane()
 
     if runner_pane_idx == -1:
@@ -98,7 +107,11 @@ def run_all_tests_in_file():
         path=path_to_file
     )
 
-    _execute_cmd_in_pane(cmd, runner_pane_idx)
+    _execute_cmd_in_pane(
+        cmd,
+        runner_pane_idx,
+        SETUP_TEST_RUNNER_CMD
+    )
 
 
 def _split_pane():
@@ -107,8 +120,15 @@ def _split_pane():
         print("Secondary Pane exists. Not creating a new one.")
         return
     vim.eval("system('tmux split-window -p 20')")
+
     # Get back into original window's context
     vim.eval("system('tmux last-pane')")
+
+    runner_pane_idx = _get_idx_of_runner_pane()
+    _execute_cmd_in_pane(
+        SETUP_CMD,
+        runner_pane_idx
+    )
 
 
 def _get_idx_of_runner_pane():
@@ -145,7 +165,20 @@ def _get_prev_line_having_substr(substr):
     return substr_name
 
 
-def _execute_cmd_in_pane(command, runner_pane_idx):
+def _execute_cmd_in_pane(
+        command,
+        runner_pane_idx,
+        initializing_cmd=None
+    ):
+
+    if initializing_cmd:
+        vim.eval(SEND_KEY_CMD.format(
+            target=runner_pane_idx,
+            key=initializing_cmd))
+
+        vim.eval(SEND_KEY_CMD.format(
+            target=runner_pane_idx,
+            key='Enter'))
 
     vim.eval(SEND_KEY_CMD.format(
         target=runner_pane_idx,
@@ -154,4 +187,3 @@ def _execute_cmd_in_pane(command, runner_pane_idx):
     vim.eval(SEND_KEY_CMD.format(
         target=runner_pane_idx,
         key='Enter'))
-
