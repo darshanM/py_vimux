@@ -14,7 +14,11 @@ RUN_TEST_CMD = "{test_runner}  {path}"
 
 TEST_RUNNER = vim.eval('g:test_runner')
 SETUP_CMD = vim.eval('g:setup_cmd')
-SETUP_TEST_RUNNER_CMD = vim.eval('g:setup_test_runner_cmd')
+
+if vim.eval("exists('g:setup_test_runner_cmd')"):
+  SETUP_TEST_RUNNER_CMD = vim.eval('g:setup_test_runner_cmd')
+else:
+  SETUP_TEST_RUNNER_CMD = None
 
 
 def split_pane():
