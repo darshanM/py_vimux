@@ -13,12 +13,16 @@ GET_FILE_PATH_CMD = "expand('%s')"
 RUN_TEST_CMD = "{test_runner}  {path}"
 
 TEST_RUNNER = vim.eval('g:test_runner')
-SETUP_CMD = vim.eval('g:setup_cmd')
 
 if vim.eval("exists('g:setup_test_runner_cmd')"):
-  SETUP_TEST_RUNNER_CMD = vim.eval('g:setup_test_runner_cmd')
+    SETUP_CMD = vim.eval('g:setup_cmd')
 else:
-  SETUP_TEST_RUNNER_CMD = None
+    SETUP_CMD = vim.eval('g:setup_cmd')
+
+if vim.eval("exists('g:setup_test_runner_cmd')"):
+    SETUP_TEST_RUNNER_CMD = vim.eval('g:setup_test_runner_cmd')
+else:
+    SETUP_TEST_RUNNER_CMD = None
 
 
 def split_pane():
@@ -129,10 +133,12 @@ def _split_pane():
     vim.eval("system('tmux last-pane')")
 
     runner_pane_idx = _get_idx_of_runner_pane()
-    _execute_cmd_in_pane(
-        SETUP_CMD,
-        runner_pane_idx
-    )
+    
+    if SETUP_CMD:
+        _execute_cmd_in_pane(
+            SETUP_CMD,
+            runner_pane_idx
+        )
 
 
 def _get_idx_of_runner_pane():
