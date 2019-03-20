@@ -14,10 +14,10 @@ RUN_TEST_CMD = "{test_runner}  {path}"
 
 TEST_RUNNER = vim.eval('g:test_runner')
 
-if vim.eval("exists('g:setup_test_runner_cmd')"):
+if vim.eval("exists('g:setup_cmd')"):
     SETUP_CMD = vim.eval('g:setup_cmd')
 else:
-    SETUP_CMD = vim.eval('g:setup_cmd')
+    SETUP_CMD = None
 
 if vim.eval("exists('g:setup_test_runner_cmd')"):
     SETUP_TEST_RUNNER_CMD = vim.eval('g:setup_test_runner_cmd')
