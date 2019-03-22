@@ -4,7 +4,7 @@ SEND_KEY_CMD = '''system('tmux send-keys -t {target} "{key}"')'''
 
 LIST_PANES_CMD = '''system('tmux list-panes -F "#{pane_index}:#{pane_active}"')'''
 
-SEARCH_LAST_CMD = "search('{substr}', 'bc')"
+SEARCH_LAST_CMD = "search('{substr}', 'bcn')"
 
 GET_LINE_CMD = "getline({line_num})"
 
