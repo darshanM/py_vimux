@@ -161,6 +161,11 @@ def _get_class_name():
 
 
 def _get_prev_line_having_substr(substr):
+    """ hacky attempt to return ClassName or method_name
+    from preceding lines that look like -
+    class ClassName(a, b):
+    def method_name(a, b, *args)
+    """
     last_occ_idx = vim.eval(SEARCH_LAST_CMD.format(
         substr=substr
     ))
@@ -169,9 +174,9 @@ def _get_prev_line_having_substr(substr):
     line_content = vim.eval(GET_LINE_CMD.format(
         line_num=last_occ_idx
     ))
-    line_content = line_content.strip()
-    _, substr_name_with_args = line_content.split()
-    substr_name, _ = substr_name_with_args.split("(")
+    line_content = line_content.strip().split()
+    substr_container = line_content[1]
+    substr_name, _ = substr_container.split("(")
     return substr_name
 
 
