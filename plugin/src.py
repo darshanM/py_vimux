@@ -153,7 +153,7 @@ def _get_idx_of_runner_pane():
 
 
 def _get_function_name():
-    return _get_prev_line_having_substr("test_")
+    return _get_prev_line_having_substr("def test_")
 
 
 def _get_class_name():
