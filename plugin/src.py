@@ -50,11 +50,23 @@ def run_focused_test():
 
     path_to_file = vim.eval(GET_FILE_PATH_CMD)
 
-    test_to_run = '{file_name}::{class_name}::{test}'.format(
-        file_name=path_to_file,
-        class_name=c_name,
-        test=f_name
-    )
+    if TEST_RUNNER == 'nosetests':
+        test_to_run = '{file_name}:{class_name}.{test}'.format(
+            file_name=path_to_file,
+            class_name=c_name,
+            test=f_name
+        )
+
+    elif TEST_RUNNER == 'py.test':
+        test_to_run = '{file_name}::{class_name}::{test}'.format(
+            file_name=path_to_file,
+            class_name=c_name,
+            test=f_name
+        )
+
+    else:
+        print("Invalid test runner. Must be one of [nosetests, py.test]")
+        return
 
     cmd = RUN_TEST_CMD.format(
         test_runner=TEST_RUNNER,
@@ -84,7 +96,7 @@ def run_focused_class():
 
     path_to_file = vim.eval(GET_FILE_PATH_CMD)
 
-    test_to_run = '{file_name}::{class_name}'.format(
+    test_to_run = '{file_name}:{class_name}'.format(
         file_name=path_to_file,
         class_name=c_name,
     )

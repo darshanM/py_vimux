@@ -13,7 +13,7 @@ command! -nargs=0 RunFile call RunFile()
 
 let s:plugin_path = escape(expand('<sfile>:p:h'), '\')
 
-let g:test_runner = 'py.test'
+let g:test_runner = 'nosetests'
 
 function! Split_pane()
 exe 'py3file ' . escape(s:plugin_path, ' ') . '/src.py'
