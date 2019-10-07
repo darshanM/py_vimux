@@ -10,7 +10,7 @@ GET_LINE_CMD = "getline({line_num})"
 
 GET_FILE_PATH_CMD = "expand('%s')"
 
-RUN_TEST_CMD = "{test_runner}  {path}"
+RUN_TEST_CMD = "{test_runner}  {test_runner_options} {path}"
 
 TEST_RUNNER = vim.eval('g:test_runner')
 
@@ -23,6 +23,12 @@ if int(vim.eval("exists('g:setup_test_runner_cmd')")):
     SETUP_TEST_RUNNER_CMD = vim.eval('g:setup_test_runner_cmd')
 else:
     SETUP_TEST_RUNNER_CMD = None
+
+
+if int(vim.eval("exists('g:test_runner_options')")):
+    TEST_RUNNER_OPTIONS = vim.eval('g:test_runner_options')
+else:
+    TEST_RUNNER_OPTIONS = None
 
 
 def split_pane():
@@ -70,6 +76,7 @@ def run_focused_test():
 
     cmd = RUN_TEST_CMD.format(
         test_runner=TEST_RUNNER,
+        test_runner_options=TEST_RUNNER_OPTIONS if TEST_RUNNER_OPTIONS else '',
         path=test_to_run
     )
 
@@ -103,6 +110,7 @@ def run_focused_class():
 
     cmd = RUN_TEST_CMD.format(
         test_runner=TEST_RUNNER,
+        test_runner_options=TEST_RUNNER_OPTIONS if TEST_RUNNER_OPTIONS else '',
         path=test_to_run
     )
 
@@ -124,6 +132,7 @@ def run_all_tests_in_file():
 
     cmd = RUN_TEST_CMD.format(
         test_runner=TEST_RUNNER,
+        test_runner_options=TEST_RUNNER_OPTIONS if TEST_RUNNER_OPTIONS else '',
         path=path_to_file
     )
 
