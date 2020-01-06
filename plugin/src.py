@@ -102,7 +102,7 @@ def run_focused_class():
             file_name=path_to_file, class_name=c_name
         )
     elif TEST_RUNNER == "py.test":
-        test_to_run = "{file_name}:{class_name}".format(
+        test_to_run = "{file_name}::{class_name}".format(
             file_name=path_to_file, class_name=c_name
         )
     else:
