@@ -1,8 +1,8 @@
 import vim
 
-SEND_KEY_CMD = '''system('tmux send-keys -t {target} "{key}"')'''
+SEND_KEY_CMD = """system('tmux send-keys -t {target} "{key}"')"""
 
-LIST_PANES_CMD = '''system('tmux list-panes -F "#{pane_index}:#{pane_active}"')'''
+LIST_PANES_CMD = """system('tmux list-panes -F "#{pane_index}:#{pane_active}"')"""
 
 SEARCH_LAST_CMD = "search('{substr}', 'bcn')"
 
@@ -12,23 +12,23 @@ GET_FILE_PATH_CMD = "expand('%s')"
 
 RUN_TEST_CMD = "{test_runner}  {test_runner_options} {path}"
 
-TEST_RUNNER = vim.eval('g:test_runner')
-SETUP_CMD = vim.eval('g:setup_cmd')
-SETUP_TEST_RUNNER_CMD = vim.eval('g:setup_test_runner_cmd')
+TEST_RUNNER = vim.eval("g:test_runner")
+SETUP_CMD = vim.eval("g:setup_cmd")
+SETUP_TEST_RUNNER_CMD = vim.eval("g:setup_test_runner_cmd")
 
 if int(vim.eval("exists('g:setup_cmd')")):
-    SETUP_CMD = vim.eval('g:setup_cmd')
+    SETUP_CMD = vim.eval("g:setup_cmd")
 else:
     SETUP_CMD = None
 
 if int(vim.eval("exists('g:setup_test_runner_cmd')")):
-    SETUP_TEST_RUNNER_CMD = vim.eval('g:setup_test_runner_cmd')
+    SETUP_TEST_RUNNER_CMD = vim.eval("g:setup_test_runner_cmd")
 else:
     SETUP_TEST_RUNNER_CMD = None
 
 
 if int(vim.eval("exists('g:test_runner_options')")):
-    TEST_RUNNER_OPTIONS = vim.eval('g:test_runner_options')
+    TEST_RUNNER_OPTIONS = vim.eval("g:test_runner_options")
 else:
     TEST_RUNNER_OPTIONS = None
 
@@ -58,18 +58,14 @@ def run_focused_test():
 
     path_to_file = vim.eval(GET_FILE_PATH_CMD)
 
-    if TEST_RUNNER == 'nosetests':
-        test_to_run = '{file_name}:{class_name}.{test}'.format(
-            file_name=path_to_file,
-            class_name=c_name,
-            test=f_name
+    if TEST_RUNNER == "nosetests":
+        test_to_run = "{file_name}:{class_name}.{test}".format(
+            file_name=path_to_file, class_name=c_name, test=f_name
         )
 
-    elif TEST_RUNNER == 'py.test':
-        test_to_run = '{file_name}::{class_name}::{test}'.format(
-            file_name=path_to_file,
-            class_name=c_name,
-            test=f_name
+    elif TEST_RUNNER == "py.test":
+        test_to_run = "{file_name}::{class_name}::{test}".format(
+            file_name=path_to_file, class_name=c_name, test=f_name
         )
 
     else:
@@ -78,15 +74,11 @@ def run_focused_test():
 
     cmd = RUN_TEST_CMD.format(
         test_runner=TEST_RUNNER,
-        test_runner_options=TEST_RUNNER_OPTIONS if TEST_RUNNER_OPTIONS else '',
-        path=test_to_run
+        test_runner_options=TEST_RUNNER_OPTIONS if TEST_RUNNER_OPTIONS else "",
+        path=test_to_run,
     )
 
-    _execute_cmd_in_pane(
-        cmd,
-        runner_pane_idx,
-        SETUP_TEST_RUNNER_CMD
-    )
+    _execute_cmd_in_pane(cmd, runner_pane_idx, SETUP_TEST_RUNNER_CMD)
 
 
 def run_focused_class():
@@ -105,22 +97,25 @@ def run_focused_class():
 
     path_to_file = vim.eval(GET_FILE_PATH_CMD)
 
-    test_to_run = '{file_name}:{class_name}'.format(
-        file_name=path_to_file,
-        class_name=c_name,
-    )
+    if TEST_RUNNER == "nosetests":
+        test_to_run = "{file_name}:{class_name}".format(
+            file_name=path_to_file, class_name=c_name
+        )
+    elif TEST_RUNNER == "py.test":
+        test_to_run = "{file_name}:{class_name}".format(
+            file_name=path_to_file, class_name=c_name
+        )
+    else:
+        print("Invalid test runner. Must be one of [nosetests, py.test]")
+        return
 
     cmd = RUN_TEST_CMD.format(
         test_runner=TEST_RUNNER,
-        test_runner_options=TEST_RUNNER_OPTIONS if TEST_RUNNER_OPTIONS else '',
-        path=test_to_run
+        test_runner_options=TEST_RUNNER_OPTIONS if TEST_RUNNER_OPTIONS else "",
+        path=test_to_run,
     )
 
-    _execute_cmd_in_pane(
-        cmd,
-        runner_pane_idx,
-        SETUP_TEST_RUNNER_CMD
-    )
+    _execute_cmd_in_pane(cmd, runner_pane_idx, SETUP_TEST_RUNNER_CMD)
 
 
 def run_all_tests_in_file():
@@ -134,15 +129,11 @@ def run_all_tests_in_file():
 
     cmd = RUN_TEST_CMD.format(
         test_runner=TEST_RUNNER,
-        test_runner_options=TEST_RUNNER_OPTIONS if TEST_RUNNER_OPTIONS else '',
-        path=path_to_file
+        test_runner_options=TEST_RUNNER_OPTIONS if TEST_RUNNER_OPTIONS else "",
+        path=path_to_file,
     )
 
-    _execute_cmd_in_pane(
-        cmd,
-        runner_pane_idx,
-        SETUP_TEST_RUNNER_CMD
-    )
+    _execute_cmd_in_pane(cmd, runner_pane_idx, SETUP_TEST_RUNNER_CMD)
 
 
 def _split_pane():
@@ -158,10 +149,7 @@ def _split_pane():
     runner_pane_idx = _get_idx_of_runner_pane()
 
     if SETUP_CMD:
-        _execute_cmd_in_pane(
-            SETUP_CMD,
-            runner_pane_idx
-        )
+        _execute_cmd_in_pane(SETUP_CMD, runner_pane_idx)
 
 
 def _get_idx_of_runner_pane():
@@ -170,7 +158,7 @@ def _get_idx_of_runner_pane():
     if len(panes) == 1:
         return -1
     for pane in panes:
-        pane_id, pane_active = pane.split(':')
+        pane_id, pane_active = pane.split(":")
         if int(pane_active) == 0:
             return int(pane_id)
 
@@ -189,39 +177,23 @@ def _get_prev_line_having_substr(substr):
     class ClassName(a, b):
     def method_name(a, b, *args)
     """
-    last_occ_idx = vim.eval(SEARCH_LAST_CMD.format(
-        substr=substr
-    ))
+    last_occ_idx = vim.eval(SEARCH_LAST_CMD.format(substr=substr))
     if last_occ_idx == 0:
         return
-    line_content = vim.eval(GET_LINE_CMD.format(
-        line_num=last_occ_idx
-    ))
+    line_content = vim.eval(GET_LINE_CMD.format(line_num=last_occ_idx))
     line_content = line_content.strip().split()
     substr_container = line_content[1]
     substr_name, _ = substr_container.split("(")
     return substr_name
 
 
-def _execute_cmd_in_pane(
-        command,
-        runner_pane_idx,
-        initializing_cmd=None
-    ):
+def _execute_cmd_in_pane(command, runner_pane_idx, initializing_cmd=None):
 
     if initializing_cmd:
-        vim.eval(SEND_KEY_CMD.format(
-            target=runner_pane_idx,
-            key=initializing_cmd))
+        vim.eval(SEND_KEY_CMD.format(target=runner_pane_idx, key=initializing_cmd))
 
-        vim.eval(SEND_KEY_CMD.format(
-            target=runner_pane_idx,
-            key='Enter'))
+        vim.eval(SEND_KEY_CMD.format(target=runner_pane_idx, key="Enter"))
 
-    vim.eval(SEND_KEY_CMD.format(
-        target=runner_pane_idx,
-        key=command))
+    vim.eval(SEND_KEY_CMD.format(target=runner_pane_idx, key=command))
 
-    vim.eval(SEND_KEY_CMD.format(
-        target=runner_pane_idx,
-        key='Enter'))
+    vim.eval(SEND_KEY_CMD.format(target=runner_pane_idx, key="Enter"))
